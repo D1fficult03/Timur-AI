@@ -43,6 +43,3 @@ export default async ({ req, res }) => {
     return res.json({ reply: "Ошибка сервера" });
   }
 };
-
-
-
