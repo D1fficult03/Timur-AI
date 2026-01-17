@@ -15,7 +15,7 @@ export default async ({ req, res }) => {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "Authorization": `Bearer ${process.env.sk-08dbe8cc0ab3431787da1c4f9e9f53ae}`
+          "Authorization": `Bearer ${process.env.DEEPSEEK_API_KEY}`
         },
         body: JSON.stringify({
           model: "deepseek-chat",
