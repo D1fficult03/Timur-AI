@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Тимур AI</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: radial-gradient(circle at top, #0f2027, #05080a 60%);
+      color: #ffffff;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    header {
+      padding: 30px 20px;
+      text-align: center;
+    }
+    header h1 {
+      font-size: 3rem;
+      margin: 0;
+      background: linear-gradient(135deg, #00c6ff, #7cffc1);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    header p {
+      opacity: 0.85;
+    }
+    .chat-container {
+      flex: 1;
+      max-width: 900px;
+      width: 100%;
+      margin: 0 auto 20px;
+      background: rgba(255,255,255,0.05);
+      border-radius: 20px;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+      overflow: hidden;
+    }
+    .messages {
+      flex: 1;
+      padding: 20px;
+      overflow-y: auto;
+    }
+    .message {
+      max-width: 70%;
+      margin-bottom: 14px;
+      padding: 14px 18px;
+      border-radius: 16px;
+      line-height: 1.4;
+    }
+    .user {
+      background: linear-gradient(135deg, #0072ff, #00c6ff);
+      margin-left: auto;
+    }
+    .ai {
+      background: rgba(255,255,255,0.12);
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+    .input-area {
+      display: flex;
+      padding: 14px;
+      background: rgba(0,0,0,0.4);
+      gap: 10px;
+    }
+    .input-area input {
+      flex: 1;
+      padding: 14px 16px;
+      border-radius: 14px;
+      border: none;
+      outline: none;
+      font-size: 1rem;
+    }
+    .input-area button {
+      padding: 14px 22px;
+      border-radius: 14px;
+      border: none;
+      cursor: pointer;
+      background: linear-gradient(135deg, #00c6ff, #7cffc1);
+      color: #000;
+      font-weight: 600;
+    }
+    footer {
+      text-align: center;
+      font-size: 0.85rem;
+      opacity: 0.6;
+      padding-bottom: 10px;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Тимур AI</h1>
+    <p>Я отвечаю от своего имени и думаю с помощью DeepSeek</p>
+  </header>
+
+  <div class="chat-container">
+    <div class="messages" id="messages">
+      <div class="message ai">Привет! Я Тимур AI. Задай мне любой вопрос 👋</div>
+    </div>
+    <div class="input-area">
+      <input id="userInput" type="text" placeholder="Напиши сообщение..." />
+      <button onclick="sendMessage()">Отправить</button>
+    </div>
+  </div>
+
+  <footer>© 2026 Тимур AI</footer>
+
+  <script>
+    // API ключ УДАЛЕН из фронта (используется Appwrite Function)
+    const FUNCTION_URL = "https://YOUR_APPWRITE_FUNCTION_URL"; // вставь ключ
+    const API_URL = "https://api.deepseek.com/chat/completions";
+
+    const messagesDiv = document.getElementById('messages');
+    const input = document.getElementById('userInput');
+
+    async function sendMessage() {
+      const text = input.value.trim();
+      if (!text) return;
+
+      addMessage(text, 'user');
+      input.value = '';
+
+            const response = await fetch(FUNCTION_URL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ message: text })
+      });
+
+      const data = await response.json();
+            const reply = data.reply || 'Ошибка ответа';
+
+      addMessage(reply, 'ai');
+    }
+
+    function addMessage(text, type) {
+      const div = document.createElement('div');
+      div.className = `message ${type}`;
+      div.innerText = text;
+      messagesDiv.appendChild(div);
+      messagesDiv.scrollTop = messagesDiv.scrollHeight;
+    }
+
+    input.addEventListener('keydown', e => {
+      if (e.key === 'Enter') sendMessage();
+    });
+  </script>
+</body>
+</html>
