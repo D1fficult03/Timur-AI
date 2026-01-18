@@ -8,7 +8,7 @@ export default async ({ req, res }) => {
     }
 
     const response = await fetch(
-      "https://chat.deepseek.com",
+      "https://api.deepseek.com/chat/completions",
       {
         method: "POST",
         headers: {
@@ -44,4 +44,5 @@ export default async ({ req, res }) => {
     });
   }
 };
+
 
