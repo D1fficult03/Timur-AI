@@ -1,12 +1,10 @@
-import fetch from "node-fetch";
-
 export default async ({ req, res }) => {
   try {
-    const body = JSON.parse(req.body || "{}");
+    const body = req.body ? JSON.parse(req.body) : {};
     const userMessage = body.message;
 
     if (!userMessage) {
-      return res.json({ reply: "Сообщение пустое." });
+      return res.json({ reply: "Сообщение пустое" });
     }
 
     const response = await fetch(
@@ -37,9 +35,12 @@ export default async ({ req, res }) => {
     const data = await response.json();
 
     return res.json({
-      reply: data.choices?.[0]?.message?.content || "Ошибка ответа"
+      reply: data.choices?.[0]?.message?.content || "Нет ответа от ИИ"
     });
   } catch (e) {
-    return res.json({ reply: "Ошибка сервера" });
+    return res.json({
+      reply: "Ошибка сервера",
+      error: e.message
+    });
   }
 };
