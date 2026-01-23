@@ -5,205 +5,174 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Тимур AI</title>
   <style>
-    :root {
-      --bg: #0f0f10;
-      --panel: #171717;
-      --border: #2a2a2a;
-      --text: #e5e5e5;
-      --muted: #9b9b9b;
-      --input: #202020;
-      --accent: #10a37f;
-      --user: #1e1e1e;
-      --ai: #151515;
-    }
-
     * { box-sizing: border-box; }
-
     body {
       margin: 0;
-      font-family: Inter, system-ui, sans-serif;
-      background: var(--bg);
-      color: var(--text);
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Ubuntu;
+      background: #343541;
+      color: #ececf1;
       height: 100vh;
       display: flex;
     }
-
-    /* SIDEBAR */
     .sidebar {
       width: 260px;
-      background: var(--panel);
-      border-right: 1px solid var(--border);
-      padding: 14px;
+      background: #202123;
+      padding: 16px;
       display: flex;
       flex-direction: column;
-      gap: 10px;
     }
-
+    .sidebar h1 {
+      font-size: 1.1rem;
+      margin: 0 0 16px;
+    }
     .new-chat {
-      border: 1px solid var(--border);
+      border: 1px solid #4d4d4f;
       background: transparent;
-      color: var(--text);
+      color: #ececf1;
       padding: 10px;
       border-radius: 8px;
       cursor: pointer;
+      margin-bottom: 20px;
     }
-
-    .chat-list {
-      font-size: 14px;
-      color: var(--muted);
-      overflow-y: auto;
-    }
-
-    /* MAIN */
-    .main {
+    .chat-area {
       flex: 1;
       display: flex;
       flex-direction: column;
-      position: relative;
+      background: #343541;
     }
-
     .messages {
       flex: 1;
-      padding: 40px 0 120px;
+      padding: 24px 0;
       overflow-y: auto;
     }
-
-    .message {
-      max-width: 720px;
-      margin: 0 auto 24px;
-      padding: 18px 20px;
-      border-radius: 14px;
-      line-height: 1.6;
-      white-space: pre-wrap;
-    }
-
-    .user {
-      background: var(--user);
-    }
-
-    .ai {
-      background: var(--ai);
-    }
-
-    .typing {
-      color: var(--muted);
-      font-style: italic;
-    }
-
-    /* INPUT */
-    .input-box {
-      position: absolute;
-      bottom: 24px;
-      width: 100%;
+    .message-row {
+      padding: 16px 0;
       display: flex;
       justify-content: center;
     }
-
-    .input-wrapper {
-      width: 720px;
-      max-width: 90%;
-      background: var(--input);
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 10px 14px;
-      display: flex;
-      align-items: center;
-      gap: 10px;
+    .message-row.ai {
+      background: #444654;
     }
-
-    textarea {
+    .message-row.user {
+      background: #343541;
+    }
+    .message {
+      max-width: 720px;
+      width: 100%;
+      padding: 0 24px;
+      line-height: 1.6;
+      white-space: pre-wrap;
+    }
+    .input-area {
+      border-top: 1px solid #4d4d4f;
+      padding: 16px;
+      display: flex;
+      justify-content: center;
+      background: #343541;
+    }
+    .input-box {
+      max-width: 720px;
+      width: 100%;
+      display: flex;
+      background: #40414f;
+      border-radius: 12px;
+      padding: 8px;
+    }
+    .input-box textarea {
       flex: 1;
+      resize: none;
       background: transparent;
       border: none;
-      resize: none;
       outline: none;
-      color: var(--text);
-      font-size: 15px;
+      color: #ececf1;
+      font-size: 1rem;
+      padding: 10px;
       max-height: 200px;
     }
-
-    button.send {
-      background: var(--accent);
+    .input-box button {
+      background: #19c37d;
       border: none;
-      color: #fff;
-      border-radius: 50%;
-      width: 36px;
-      height: 36px;
+      border-radius: 8px;
+      padding: 0 16px;
+      color: #000;
+      font-weight: 600;
       cursor: pointer;
-      font-size: 16px;
+    }
+    @media (max-width: 768px) {
+      .sidebar { display: none; }
     }
   </style>
 </head>
 <body>
-  <aside class="sidebar">
-    <button class="new-chat" onclick="newChat()">➕ Новый чат</button>
-    <div class="chat-list">Текущий чат</div>
-  </aside>
+  <div class="sidebar">
+    <h1>Тимур AI</h1>
+    <button class="new-chat" onclick="newChat()">＋ Новый чат</button>
+  </div>
 
-  <main class="main">
-    <div id="messages" class="messages"></div>
-
-    <div class="input-box">
-      <div class="input-wrapper">
-        <textarea id="input" rows="1" placeholder="Спроси что-нибудь..."></textarea>
-        <button class="send" onclick="send()">➤</button>
+  <div class="chat-area">
+    <div class="messages" id="messages">
+      <div class="message-row ai">
+        <div class="message">Привет! Я Тимур AI.</div>
       </div>
     </div>
-  </main>
+
+    <div class="input-area">
+      <div class="input-box">
+        <textarea id="userInput" rows="1" placeholder="Напиши сообщение..."></textarea>
+        <button onclick="sendMessage()">➤</button>
+      </div>
+    </div>
+  </div>
 
   <script>
     const FUNCTION_URL = "https://fra.cloud.appwrite.io/v1/functions/696c1637000668435a2b/executions";
+    const messagesDiv = document.getElementById('messages');
+    const input = document.getElementById('userInput');
 
-    const messagesEl = document.getElementById("messages");
-    const inputEl = document.getElementById("input");
-
-    function addMessage(text, cls) {
-      const div = document.createElement("div");
-      div.className = `message ${cls}`;
-      div.textContent = text;
-      messagesEl.appendChild(div);
-      messagesEl.scrollTop = messagesEl.scrollHeight;
-      return div;
+    function addMessage(text, type) {
+      const row = document.createElement('div');
+      row.className = `message-row ${type}`;
+      const msg = document.createElement('div');
+      msg.className = 'message';
+      msg.innerText = text;
+      row.appendChild(msg);
+      messagesDiv.appendChild(row);
+      messagesDiv.scrollTop = messagesDiv.scrollHeight;
     }
 
-    async function send() {
-      const text = inputEl.value.trim();
+    async function sendMessage() {
+      const text = input.value.trim();
       if (!text) return;
+      addMessage(text, 'user');
+      input.value = '';
 
-      inputEl.value = "";
-      addMessage(text, "user");
+      addMessage('Тимур AI печатает…', 'ai');
+      const typing = messagesDiv.lastChild;
 
-      const typing = addMessage("Тимур AI печатает…", "ai typing");
-
-      const res = await fetch(FUNCTION_URL, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          message: text
-        })
-      });
-
+      try {
+        const res = await fetch(FUNCTION_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ message: text })
+        });
         const data = await res.json();
-        typing.remove();
-        addMessage(data.reply || "Нет ответа", "ai");
+        typing.querySelector('.message').innerText = data.reply;
       } catch (e) {
-        typing.remove();
-        addMessage("Ошибка соединения", "ai");
+        typing.querySelector('.message').innerText = 'Ошибка соединения';
       }
     }
-
-    inputEl.addEventListener("keydown", e => {
-      if (e.key === "Enter" && !e.shiftKey) {
-        e.preventDefault();
-        send();
-      }
-    });
 
     function newChat() {
-      messagesEl.innerHTML = "";
+      messagesDiv.innerHTML = '';
+      addMessage('Новый чат. Я Тимур AI 👋', 'ai');
     }
+
+    input.addEventListener('keydown', e => {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        sendMessage();
+      }
+    });
   </script>
 </body>
 </html>
