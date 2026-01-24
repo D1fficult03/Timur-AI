@@ -6,10 +6,11 @@ export default async function handler(req) {
   const body = await req.json();
   const messages = body.messages || [];
 
-  const groqMessages = messages.map(m => ({
-    role: m.role,
-    content: m.text
-  }));
+const groqMessages = messages.map(m => ({
+  role: m.role === "ai" ? "assistant" : m.role,
+  content: m.text
+}));
+
 
   const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
     method: "POST",
@@ -39,3 +40,4 @@ export default async function handler(req) {
     headers: { "Content-Type": "text/plain; charset=utf-8" }
   });
 }
+
