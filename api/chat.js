@@ -3,6 +3,11 @@ export const config = { runtime: "edge" };
 export default async function handler(req) {
   const { messages } = await req.json();
 
+  const fixedMessages = messages.map(m => ({
+    role: m.role,
+    content: m.text   // 👈 ВАЖНО
+  }));
+
   const response = await fetch("https://api.deepseek.com/v1/chat/completions", {
     method: "POST",
     headers: {
@@ -14,7 +19,7 @@ export default async function handler(req) {
       stream: true,
       messages: [
         { role: "system", content: "Ты Timur AI, умный и дружелюбный ассистент." },
-        ...messages
+        ...fixedMessages
       ]
     })
   });
