@@ -1,30 +1,26 @@
-export const config = {
-  runtime: "edge"
-};
+export const config = { runtime: "edge" };
 
 export default async function handler(req) {
-  const body = await req.json();
-  const messages = body.messages || [];
+  const { messages = [] } = await req.json();
 
-const groqMessages = messages.map(m => ({
-  role: m.role === "ai" ? "assistant" : m.role,
-  content: m.text
-}));
-
+  const groqMessages = messages.map(m => ({
+    role: m.role === "ai" ? "assistant" : m.role,
+    content: m.text
+  }));
 
   const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
     method: "POST",
     headers: {
-      "Authorization": "Bearer " + process.env.GROQ_API_KEY,
+      "Authorization": `Bearer ${process.env.GROQ_API_KEY}`,
       "Content-Type": "application/json"
     },
     body: JSON.stringify({
-      model: "llama3-8b-8192",
+      model: "llama-3.1-8b-instant",
       stream: true,
       messages: [
         {
           role: "system",
-          content: "Ты Timur AI — дружелюбный и умный ассистент."
+          content: "Ты Timur AI — умный, дружелюбный ассистент."
         },
         ...groqMessages
       ]
@@ -40,4 +36,3 @@ const groqMessages = messages.map(m => ({
     headers: { "Content-Type": "text/plain; charset=utf-8" }
   });
 }
-
