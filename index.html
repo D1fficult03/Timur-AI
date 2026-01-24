@@ -1,20 +1,27 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8">
   <title>Timur AI</title>
-  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <div class="chat">
-    <header>Timur AI</header>
+
+<div class="app">
+  <aside>
+    <button id="newChat">＋ Новый чат</button>
+    <div id="chatList"></div>
+  </aside>
+
+  <main>
     <div id="messages"></div>
     <form id="form">
-      <input id="input" placeholder="Спроси что-нибудь..." autocomplete="off" />
+      <input id="input" placeholder="Спроси что-нибудь..." />
       <button>➤</button>
     </form>
-  </div>
+  </main>
+</div>
 
-  <script src="script.js"></script>
+<script src="script.js"></script>
 </body>
 </html>
