@@ -15,7 +15,7 @@ export default async function handler(req) {
       "Content-Type": "application/json"
     },
     body: JSON.stringify({
-      model: "llama-3.1-70b-versatile",
+      model: "llama-3.1-8b-instant",
       stream: true,
       messages: [
         {
@@ -36,4 +36,3 @@ export default async function handler(req) {
     headers: { "Content-Type": "text/plain; charset=utf-8" }
   });
 }
-
