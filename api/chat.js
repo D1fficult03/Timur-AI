@@ -1,7 +1,9 @@
-export default async function handler(req, res) {
-  const { message } = req.body;
+export const config = { runtime: "edge" };
 
-  const r = await fetch("https://api.deepseek.com/v1/chat/completions", {
+export default async function handler(req) {
+  const { messages } = await req.json();
+
+  const response = await fetch("https://api.deepseek.com/v1/chat/completions", {
     method: "POST",
     headers: {
       "Authorization": `Bearer ${process.env.DEEPSEEK_API_KEY}`,
@@ -9,13 +11,15 @@ export default async function handler(req, res) {
     },
     body: JSON.stringify({
       model: "deepseek-chat",
+      stream: true,
       messages: [
-        { role: "system", content: "Ты Timur AI, дружелюбный ассистент." },
-        { role: "user", content: message }
+        { role: "system", content: "Ты Timur AI, умный и дружелюбный ассистент." },
+        ...messages
       ]
     })
   });
 
-  const data = await r.json();
-  res.json({ reply: data.choices[0].message.content });
+  return new Response(response.body, {
+    headers: { "Content-Type": "text/plain" }
+  });
 }
